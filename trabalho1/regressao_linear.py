@@ -67,7 +67,7 @@ class LinearRegression:
     def predict(self, data):
         predicted_labels=[]
         for point in data:
-            if (np.inner(self.w, data) > 0):
+            if (np.inner(self.w, point) > 0):
                 predicted_labels.append(1)
             else:
                 predicted_labels.append(-1)
