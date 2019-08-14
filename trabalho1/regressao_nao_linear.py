@@ -74,7 +74,7 @@ class LinearRegression:
         return predicted_labels
 
 
-    def fit2d(self, X, y):
+    def fit(self, X, y):
         n = np.size(X)
 
         m_x = np.mean(X[:,1])
@@ -85,12 +85,6 @@ class LinearRegression:
 
         self.w[0] = SS_xy/SS_xx
         self.w[1] = m_y - self.w[0]*m_x
-        return self.w
-
-    def fit(self, X, y):
-        A=(X.T)@X
-        B=(X.T)@y
-        self.w= np.linalg.solve(A, B)
         return self.w
 
 
@@ -116,9 +110,8 @@ if __name__ == '__main__':
 
         #funcao que ira mostrar nossa linha da g function
         x=np.linspace(-1,1,100)
-        A,b = transform_w_to_equation(g_function)
         #A,b = transform_w_to_equation(g_function)
-        plt.plot(x, A*x+b, '-g', label='g_function')
+        plt.plot(x, g_function[0]*x+g_function[1], '-g', label='g_function')
 
         plt.show()
     else:
@@ -128,7 +121,7 @@ if __name__ == '__main__':
             target_f=create_target()
             data, labels = load_data(N, target_f)
 
-            classifier=LinearRegression()
+            classifier=Perceptron()
             g_function, i = classifier.fit(data, labels)
 
             interactions.append(i)

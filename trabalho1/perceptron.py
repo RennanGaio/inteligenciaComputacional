@@ -8,7 +8,7 @@ import numpy as np
 import random
 import matplotlib.pyplot as plt
 from sklearn import datasets
-N=10
+N=100
 
 '''funcoes auxiliáres para geracao de dados e funcao target (f)'''
 def create_target():
@@ -66,7 +66,7 @@ class Perceptron:
     def predict(self, data):
         predicted_labels=[]
         for point in data:
-            if (np.inner(self.w, data) > 0):
+            if (np.inner(self.w, point) > 0):
                 predicted_labels.append(1)
             else:
                 predicted_labels.append(-1)
@@ -79,7 +79,7 @@ class Perceptron:
             interactions+=1
             saved_w=np.copy(self.w)
             for point, label in zip(X,y):
-                prediction=self.predict(point)[0]
+                prediction=self.predict([point])[0]
                 if prediction!= label:
                     self.w+=self.LR*(label-prediction)*point
                     break
@@ -90,7 +90,7 @@ class Perceptron:
 
 if __name__ == '__main__':
 
-    graphical=True
+    graphical=False
 
     if graphical:
         """### Visualização dos nossos dados"""
@@ -125,12 +125,24 @@ if __name__ == '__main__':
 
             classifier=Perceptron()
             g_function, i = classifier.fit(data, labels)
-
             interactions.append(i)
-            divergence.append()
+
+            #criação de novos dados para se fazer a medicao de divergencia entre as funcoes
+            data, labels = load_data(N, target_f)
+            predicted_labels = classifier.predict(data)
+
+            #variavel que guarda a divergencia a cada iteracao da comparacao
+            d=0.
+            for label, predicted_label in zip(labels, predicted_labels):
+                if label!=predicted_label:
+                    d+=1./N
+
+            divergence.append(d)
+
         interactions_mean=np.mean(np.array(interactions))
         divergence_mean=np.mean(np.array(divergence))
 
+        print("esperimento com N =", N)
         print("media de iteracoes")
         print(interactions_mean)
         print("divergencia media")
