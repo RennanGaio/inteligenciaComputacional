@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 
-'''Aluno: Rennan de Lucena Gaio '''
+'''
+Aluno: Rennan de Lucena Gaio
+Codigo referente aos 4 exercícios 13 e 14 da lista 1 de IC2
+'''
 
 import numpy as np
 import random
 import matplotlib.pyplot as plt
-N=10
+N=100
 
 '''funcoes auxiliáres para geracao de dados e funcao target (f)'''
 def create_target():
@@ -59,11 +62,12 @@ e depois passar para a função predict os dados de teste, tendo como retorno a 
 
 class LogisticRegression:
     #inicialização da classe, setando parametros como taxa de aprendizado e bias dos dados
-    def __init__(self, learning_rate=0.01, num_iter=100000, bias=True, verbose=False):
+    def __init__(self, learning_rate=0.01, num_iter=100000, bias=True, verbose=False, lenght=3):
         self.learning_rate = learning_rate
         self.num_iter = num_iter
         self.bias = bias
         self.verbose = verbose
+        self.w = np.zeros(lenght)
 
     def add_bias(self, X):
         #adiciona uma coluna de 1s aos dados de X para servirem como bias
@@ -89,7 +93,7 @@ class LogisticRegression:
     #Como eu não estava certo de sua funcionalidade eu a descartei até segunda ordem
     def gradiente1(self, X, y, z,lam=0.1):
         #temporary weight vector
-        w1 = copy.copy(self.theta) #import copy to create a true copy
+        w1 = copy.copy(self.w) #import copy to create a true copy
         w1[0] = 0
         #calc gradient
         grad = (np.dot((phi(z) - y).T,X).T) + lam * w1
@@ -108,18 +112,20 @@ class LogisticRegression:
             X = self.add_bias(X)
 
         # inicialização do vetor de pesos
-        self.theta = np.zeros(X.shape[1])
+        self.w = np.zeros(X.shape[1])
 
         #erro anterior para comparar a evolucao do erro
         loss_anterior=0
+        interations=0
         for i in range(self.num_iter):
-            z = np.dot(X, self.theta)
+            interations+=1
+            z = np.dot(X, self.w)
 
             #calcula a funcao gradiente baseada na derivada da funcao de perda (loss)
             gradient = self.gradiente(X,y,z)
 
             #anda com o vetor de pesos na direçao contraria do gradiente (pois queremos minimizar nossa funcao, nao maximizar)
-            self.theta -= self.learning_rate * gradient
+            self.w -= self.learning_rate * gradient
 
             #debug para saber o quanto o erro está se aproximando, nessa etapa, se a diferença do erro ja estivesse pequena
             #eu poderia travar o laço do for, e fazer com que meu algoritmo rodasse com menos iterações sem afetar muito seu desempenho
@@ -127,10 +133,11 @@ class LogisticRegression:
             #porém de acordo com alguns testes feitos eu vi que ficar calculando o erro em cada iteração deixa o algoritmo bem lento,
             #logo esse recurso seria interessante apenas se o erro convergisse rápido (o q paresce ser verdade)
             if(self.verbose == True and i % 100 == 0):
-                z = np.dot(X, self.theta)
+                z = np.dot(X, self.w)
                 print "loss: ", str(self.loss(self.phi(z), y))
                 print "diferença de erro:", str(loss_anterior-self.loss(self.phi(z), y))
                 loss_anterior=self.loss(self.phi(z), y)
+        return self.w,
 
     #aplica os dados de teste na funcao phi com os pesos ajustados e retorna a probabilidade dos dados estarem em cada classe
     #quanto mais perto de 1, mais ele pertence a classe 1, quanto mais perto de 0, mas ele pertence a classe 0
@@ -138,36 +145,48 @@ class LogisticRegression:
         if self.bias:
             X = self.add_bias(X)
 
-        return self.phi(np.dot(X, self.theta))
+        return self.phi(np.dot(X, self.w))
 
+    def predict(self, X):
+        if self.bias:
+            X = self.add_bias(X)
+        if (self.phi(np.dot(X, self.w)) > 0.5):
+            return 1
+        else:
+            return -1
 
 if __name__ == '__main__':
-    """### Visualização dos nossos dados"""
-    target_f=create_target()
-    data, labels = load_data(N, target_f)
-
-    rodada=0
-
+    rounds=100
+    Eout=[]
+    interactions=[]
     #para cada embaralhamento do kfold ele irá medir qual conjunto de dados obteve o melhor AUC, e ficar com esse para ser utilizado futuramente
-    for train_index, test_index in kf.split(X):
-        rodada+=1
+    for i in range(rounds):
+        target_f=create_target()
+        data, labels = load_data(N, target_f)
 
         #carrega a classe do classificador com os dados de treino e testa a cada iteração para conseguir ajustar ao melhor conjunto
-        clf=LogisticRegression(verbose=False)
-        clf.fit(X[train_index],y[train_index])
-        y_pred = clf.predict_proba(X[test_index])
+        classifier=LogisticRegression(verbose=False)
+        g_function, i = classifier.fit(data,labels)
+        interactions.append(i)
 
-        print y_pred
-        print y[test_index]
+        #criação de novos dados para se fazer a medicao de divergencia entre as funcoes
+        data, labels = load_data(N, target_f)
+        predicted_labels = classifier.predict(data)
 
-        #calcula o AUC do conjunto dado
-        auc = roc_auc_score(y[test_index], y_pred)
-        print "AUC: ", str(auc)
-        print "###########################\n"
+        #y_pred = clf.predict_proba(data)
 
-        #atualiza o melhor AUC caso necessário
-        if best_auc[0] < auc:
-            best_auc=[auc, rodada]
+        #variavel que guarda a divergencia a cada iteracao da comparacao
+        E=0.
+        for label, predicted_label in zip(labels, predicted_labels):
+            if label!=predicted_label:
+                E+=1./N
+        Eout.append(E)
 
-    print "melhor AUC: ", best_auc[0]
-    print "rodada: ", best_auc[1]
+    interactions_mean=np.mean(np.array(interactions))
+    Eout_mean=np.mean(np.array(Eout))
+
+    print("esperimento com N =", N)
+    print("media de iteracoes")
+    print(interactions_mean)
+    print("Eout medio")
+    print(Eout_mean)
