@@ -137,7 +137,7 @@ class LogisticRegression:
                 print "loss: ", str(self.loss(self.phi(z), y))
                 print "diferença de erro:", str(loss_anterior-self.loss(self.phi(z), y))
                 loss_anterior=self.loss(self.phi(z), y)
-        return self.w,
+        return self.w, interations
 
     #aplica os dados de teste na funcao phi com os pesos ajustados e retorna a probabilidade dos dados estarem em cada classe
     #quanto mais perto de 1, mais ele pertence a classe 1, quanto mais perto de 0, mas ele pertence a classe 0
