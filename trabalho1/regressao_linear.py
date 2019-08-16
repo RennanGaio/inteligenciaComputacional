@@ -8,7 +8,7 @@ import numpy as np
 import random
 import matplotlib.pyplot as plt
 from sklearn import datasets
-N=10
+
 
 '''funcoes auxiliáres para geracao de dados e funcao target (f)'''
 def create_target():
@@ -59,7 +59,7 @@ class LinearRegression:
     Implementação da regressao linear
     """
     def __init__(self, LR=0.1, threshold=10000):
-        self.w = np.zeros(2)
+        self.w = np.zeros(3)
         self.LR=LR
         self.threshold=threshold
 
@@ -94,11 +94,121 @@ class LinearRegression:
         return self.w
 
 
-if __name__ == '__main__':
+'''classe do Perceptron para aprendizado'''
 
-    graphical=True
+class Perceptron:
+    """
+    Implementação do perceptron
+    """
+    def __init__(self, w , LR=0.1, threshold=10000):
+        self.w = w
+        self.LR=LR
+        self.threshold=threshold
+
+
+    def predict(self, data):
+        predicted_labels=[]
+        for point in data:
+            if (np.inner(self.w, point) > 0):
+                predicted_labels.append(1)
+            else:
+                predicted_labels.append(-1)
+        return predicted_labels
+
+
+    def fit(self, X, y):
+        interactions=0
+        while interactions<self.threshold:
+            interactions+=1
+            saved_w=np.copy(self.w)
+            random_index_order=random.sample(range(len(y)), len(y))
+            for index in random_index_order:
+                prediction=self.predict([X[index]])[0]
+                if prediction!= y[index]:
+                    self.w+=self.LR*(y[index]-prediction)*X[index]
+                    break
+            if np.array_equal(saved_w,self.w):
+                break
+        return self.w, interactions
+
+
+def exercise_5(N=100):
+    Ein=[]
+    for j in range(1000):
+        target_f=create_target()
+        data, labels = load_data(N, target_f)
+
+        classifier=LinearRegression()
+        g_function = classifier.fit(data, labels)
+
+        predicted_labels=classifier.predict(data)
+
+        E=0
+        for label, p_label in zip(labels, predicted_labels):
+            if label!=p_label:
+                E+=1./N
+
+        Ein.append(E)
+
+    Ein_mean=np.mean(np.array(Ein))
+    print("Ein media")
+    print(Ein_mean)
+
+def exercise_6(N=1000):
+    Eout=[]
+    for j in range(1000):
+        target_f=create_target()
+        data, labels = load_data(N, target_f)
+
+        classifier=LinearRegression()
+        g_function = classifier.fit(data, labels)
+
+        #cria mais amostras fora das amostras uzadas para o treino (out of sample)
+        data, labels = load_data(N, target_f)
+
+        predicted_labels=classifier.predict(data)
+
+        E=0
+        for label, p_label in zip(labels, predicted_labels):
+            if label!=p_label:
+                E+=1./N
+        if (j%100 == 0):
+            print("rodada: ",j)
+
+        Eout.append(E)
+    Eout_mean=np.mean(np.array(Eout))
+
+    print("Eout medio")
+    print(Eout_mean)
+
+def exercise_7(N=10):
+    interactions=[]
+    for j in range(1000):
+        target_f=create_target()
+        data, labels = load_data(N, target_f)
+
+        classifier=LinearRegression()
+        g_function = classifier.fit(data, labels)
+
+        classifier=Perceptron(w=g_function)
+        g_function, i = classifier.fit(data, labels)
+
+        interactions.append(i)
+
+        if (j%100 == 0):
+            print("rodada: ",j)
+
+    interactions_mean=np.mean(np.array(interactions))
+
+    print("media de iteracoes")
+    print(interactions_mean)
+
+
+if __name__ == '__main__':
+    graphical=False
 
     if graphical:
+        N=10
         """### Visualização dos nossos dados"""
         target_f=create_target()
         data, labels = load_data(N, target_f)
@@ -122,21 +232,9 @@ if __name__ == '__main__':
 
         plt.show()
     else:
-        interactions=[]
-        divergence=[]
-        for j in range(1000):
-            target_f=create_target()
-            data, labels = load_data(N, target_f)
-
-            classifier=LinearRegression()
-            g_function, i = classifier.fit(data, labels)
-
-            interactions.append(i)
-            divergence.append()
-        interactions_mean=np.mean(np.array(interactions))
-        divergence_mean=np.mean(np.array(divergence))
-
-        print("media de iteracoes")
-        print(interactions_mean)
-        print("divergencia media")
-        print(divergence_mean)
+        exercise_5()
+        #resposta C
+        exercise_6()
+        #resposta C
+        exercise_7()
+        #resposta A

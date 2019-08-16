@@ -54,7 +54,10 @@ if __name__ == '__main__':
 
     print ("gradient descendent answers:")
     print("interations: ", interations)
+    #resposta ex 11 = D
     print("final point: ", inicial_point)
+    #resposta ex 12 = E
+
     print("")
 
     inicial_point=np.array([np.float64(1.),np.float64(1.)])
@@ -64,3 +67,4 @@ if __name__ == '__main__':
     print ("coordenate descendent answers:")
     print("final point: ", inicial_point)
     print("error: ", error_function(inicial_point[0], inicial_point[1]))
+    #resposta ex 13 = A

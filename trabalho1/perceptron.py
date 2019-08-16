@@ -8,7 +8,6 @@ import numpy as np
 import random
 import matplotlib.pyplot as plt
 from sklearn import datasets
-N=100
 
 '''funcoes auxiliáres para geracao de dados e funcao target (f)'''
 def create_target():
@@ -78,18 +77,52 @@ class Perceptron:
         while interactions<self.threshold:
             interactions+=1
             saved_w=np.copy(self.w)
-            for point, label in zip(X,y):
-                prediction=self.predict([point])[0]
-                if prediction!= label:
-                    self.w+=self.LR*(label-prediction)*point
+            random_index_order=random.sample(range(len(y)), len(y))
+            for index in random_index_order:
+                prediction=self.predict([X[index]])[0]
+                if prediction!= y[index]:
+                    self.w+=self.LR*(y[index]-prediction)*X[index]
                     break
             if np.array_equal(saved_w,self.w):
                 break
         return self.w, interactions
 
+def exercises(N=10):
+    interactions=[]
+    divergence=[]
+    for j in range(1000):
+        target_f=create_target()
+        data, labels = load_data(N, target_f)
+
+        classifier=Perceptron()
+        g_function, i = classifier.fit(data, labels)
+        interactions.append(i)
+
+        #criação de novos dados para se fazer a medicao de divergencia entre as funcoes
+        data, labels = load_data(N, target_f)
+        predicted_labels = classifier.predict(data)
+
+        #variavel que guarda a divergencia a cada iteracao da comparacao
+        d=0.
+        for label, predicted_label in zip(labels, predicted_labels):
+            if label!=predicted_label:
+                d+=1./N
+
+        divergence.append(d)
+
+    interactions_mean=np.mean(np.array(interactions))
+    divergence_mean=np.mean(np.array(divergence))
+
+    print("esperimento com N =", N)
+    print("media de iteracoes")
+    print(interactions_mean)
+    print("divergencia media")
+    print(divergence_mean)
+
+
 
 if __name__ == '__main__':
-
+    N=100
     graphical=False
 
     if graphical:
@@ -117,33 +150,9 @@ if __name__ == '__main__':
 
         plt.show()
     else:
-        interactions=[]
-        divergence=[]
-        for j in range(1000):
-            target_f=create_target()
-            data, labels = load_data(N, target_f)
-
-            classifier=Perceptron()
-            g_function, i = classifier.fit(data, labels)
-            interactions.append(i)
-
-            #criação de novos dados para se fazer a medicao de divergencia entre as funcoes
-            data, labels = load_data(N, target_f)
-            predicted_labels = classifier.predict(data)
-
-            #variavel que guarda a divergencia a cada iteracao da comparacao
-            d=0.
-            for label, predicted_label in zip(labels, predicted_labels):
-                if label!=predicted_label:
-                    d+=1./N
-
-            divergence.append(d)
-
-        interactions_mean=np.mean(np.array(interactions))
-        divergence_mean=np.mean(np.array(divergence))
-
-        print("esperimento com N =", N)
-        print("media de iteracoes")
-        print(interactions_mean)
-        print("divergencia media")
-        print(divergence_mean)
+        #essa primeira execucao e referente aos exercicios 1 e 2
+        exercises(10)
+        #resposta obtida: B e C respectivamente
+        #essa segunda execucao e referente aos exercicios 3 e 4
+        exercises(100)
+        #resposta obtida: B e B respectivamente

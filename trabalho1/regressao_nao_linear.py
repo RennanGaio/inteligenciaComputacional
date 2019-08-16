@@ -228,23 +228,7 @@ if __name__ == '__main__':
         plt.scatter(X,Y,F)
         plt.show()
 
-
-        # #A,b = transform_w_to_equation(target_f)
-        # plt.plot(x**2, A*x+b, '-r', label='target_function')
-        #
-        # #nossos dados rotulados
-        # plt.scatter(data[:,1], data[:,2], c=labels, cmap=plt.cm.Spectral)
-        #
-        # classifier=LinearRegression()
-        # g_function = classifier.fit(data, labels)
-        #
-        # #funcao que ira mostrar nossa linha da g function
-        # x=np.linspace(-1,1,100)
-        # #A,b = transform_w_to_equation(g_function)
-        # plt.plot(x, g_function[0]*x+g_function[1], '-g', label='g_function')
-        #
-        # plt.show()
     else:
         exercise_8()
-        #exercise_9()
-        #exercise_10()
+        exercise_9()
+        exercise_10()
