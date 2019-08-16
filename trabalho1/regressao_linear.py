@@ -57,12 +57,14 @@ class LinearRegression:
     """
     Implementação da regressao linear
     """
-    def __init__(self, LR=0.1, threshold=10000):
+    #função de inicialização da nossa classe. Aqui serão guardados tanto os pesos de nosso perceptron na variável w, como o learning rate na variável LR
+
+    def __init__(self):
         self.w = np.zeros(3)
-        self.LR=LR
-        self.threshold=threshold
 
-
+    #função que classifica o conjunto de pontos de entrada, em que data e um vetor com features-dimenções e N exemplos
+    #para fazer a classificacao dos pontos basta aplicar o produto interno entre os pesos e as features do seu ponto, caso seja maior que 0, entao elas pertencem a uma classe (1), caso seja
+    #menor, elas pertencem a outra classe (-1)
     def predict(self, data):
         predicted_labels=[]
         for point in data:
@@ -72,7 +74,7 @@ class LinearRegression:
                 predicted_labels.append(-1)
         return predicted_labels
 
-
+    #função teste para dados de 2 dimenções, fazendo a forma de minimos quadrados na mão, porém esta função não será utilizada na implementação das respostas
     def fit2d(self, X, y):
         n = np.size(X)
 
@@ -86,13 +88,19 @@ class LinearRegression:
         self.w[1] = m_y - self.w[0]*m_x
         return self.w
 
+    #função de aprendizado e atualização dos pesos do algoritmo, aqui está implementado o método de minimos quadrados para n dimenções
+    #o operador @ é um operador de multiplicação de matrizes. ele é específico do python 3 com o numpy, mas ele foi muito util nessa situação.
     def fit(self, X, y):
         A=(X.T)@X
         B=(X.T)@y
+        #essa função tem por objetivo resolver sistemas do tipo Ax=B, em que você passa como parâmetros o A e o B e ele te retorna o valor de x.
+        #essa forma é muito mais eficiente de fazer do que calcular a inversa da função e depois fazer outra multiplicação de matriz.
         self.w= np.linalg.solve(A, B)
         return self.w
 
 
+#todos os comentarios referentes a essa classe podem ser vistos no arquivo perceptron.py
+#sua unica diferença é que em sua inicialização é possivel passar um conjunto de pesos para inicializar, pois serão reaproveitados os pesos do nosso regressor linear.
 '''classe do Perceptron para aprendizado'''
 
 class Perceptron:
@@ -133,15 +141,21 @@ class Perceptron:
 
 def exercise_5(N=100):
     Ein=[]
+    #laço de rodadas
     for j in range(1000):
+        #inicialização dos dados
         target_f=create_target()
         data, labels = load_data(N, target_f)
 
+        #criação do classificador
         classifier=LinearRegression()
+        #retorno dos pesos da nossa função g
         g_function = classifier.fit(data, labels)
 
+        #classificação dos dados utilizando os pesos da função g
         predicted_labels=classifier.predict(data)
 
+        #calculo do erro dentro da amostra
         E=0
         for label, p_label in zip(labels, predicted_labels):
             if label!=p_label:
@@ -150,55 +164,70 @@ def exercise_5(N=100):
         Ein.append(E)
 
     Ein_mean=np.mean(np.array(Ein))
+    print("Exercicio 5")
     print("Ein media")
     print(Ein_mean)
 
 def exercise_6(N=1000):
     Eout=[]
+    #laço das rodadas
     for j in range(1000):
+        #inicialização dos dados
         target_f=create_target()
         data, labels = load_data(N, target_f)
 
+        #criação do classificador
         classifier=LinearRegression()
         g_function = classifier.fit(data, labels)
 
         #cria mais amostras fora das amostras uzadas para o treino (out of sample)
         data, labels = load_data(N, target_f)
 
+        #classificação dos dados fora da amostra utilizando os pesos da função g
         predicted_labels=classifier.predict(data)
 
+        #calculo do erro fora da amostra
         E=0
         for label, p_label in zip(labels, predicted_labels):
             if label!=p_label:
                 E+=1./N
-        if (j%100 == 0):
-            print("rodada: ",j)
+        # if (j%100 == 0):
+        #     print("rodada: ",j)
 
         Eout.append(E)
     Eout_mean=np.mean(np.array(Eout))
 
+    print("exercicio 6")
     print("Eout medio")
     print(Eout_mean)
 
 def exercise_7(N=10):
     interactions=[]
+    #laço das rodadas
     for j in range(1000):
+        #inicialização dos dados
         target_f=create_target()
         data, labels = load_data(N, target_f)
 
+        #criação do classificador
         classifier=LinearRegression()
+        #treinamento do classificador
         g_function = classifier.fit(data, labels)
 
+        #criação do classificador perceptron tendo como entrada os pesos do classificador de regressão
         classifier=Perceptron(w=g_function)
+        #retorno dos pesos e iterações necessárias para convergir da nossa função g
         g_function, i = classifier.fit(data, labels)
 
+        #salva numero de iterações medio do treino
         interactions.append(i)
-
-        if (j%100 == 0):
-            print("rodada: ",j)
+        #
+        # if (j%100 == 0):
+        #     print("rodada: ",j)
 
     interactions_mean=np.mean(np.array(interactions))
 
+    print("exercicio 7")
     print("media de iteracoes")
     print(interactions_mean)
 
@@ -206,6 +235,7 @@ def exercise_7(N=10):
 if __name__ == '__main__':
     graphical=False
 
+    #função para geração das imagens que estão contidas no relatorio. Para sua reprodução basta alterar a flag acima para True
     if graphical:
         N=10
         """### Visualização dos nossos dados"""

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Aluno: Rennan de Lucena Gaio
-Codigo referente aos exercicios 5,6 e 7 da lista 1 de IC2
+Codigo referente aos exercicios 8,9 e 10 da lista 1 de IC2
 """
 
 import numpy as np
@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 N=1000
 
 '''funcoes auxiliáres para geracao de dados e funcao target (f)'''
+#função alterada para não inicializar de maneira aleatoria
 def create_target():
     #target function = W1*x^2 + W2*y^2 + W0
     #W1 = 1, W2 = 1 e W0 = -0.6
@@ -48,6 +49,7 @@ def load_data(n, target_f):
     return np.array(data), np.array(labels)
 
 
+#Não houve alteração nessa classe, comentarios pertinentes sobre a implementação da mesma podem ser vistos no arquivo regressao_linear.py
 '''classe da regressao linear para aprendizado'''
 
 class LinearRegression:
@@ -90,21 +92,29 @@ class LinearRegression:
         return self.w
 
 def exercise_8():
+    #inicialização da quantidade de amostras, rounds e vetor acumulador de erros Ein por rodada
+    N=1000
     Ein=[]
     test_rounds=100
+    #laço das rodadas
     for j in range(test_rounds):
+        #inicialização dos dados
         target_f=create_target()
         data, labels = load_data(N, target_f)
 
         #geração de ruido da funcao
         ten_percent=int(N/10)
         for i in range(ten_percent):
+            #seleciona um indice randomico dentre a quantidade de lables
             random_index=random.randrange(len(labels))
+            #altera de forma randomica a label para 1 ou -1
             labels[random_index]=random.sample([-1,1],1)[0]
 
-
+        #inicializa o classificador
         classifier=LinearRegression()
+        #treinamento do classificador
         g_function = classifier.fit(data, labels)
+        #labels dos dados gerados a partir da função g
         predicted_labels = classifier.predict(data)
 
         #calcura o erro dentro da amostra para cada teste
@@ -116,12 +126,16 @@ def exercise_8():
 
     Ein_mean=np.mean(np.array(Ein))
 
+    print("exercicio 8")
     print("media de erro dentro da amostra")
     print(Ein_mean)
 
     ##resposta D
 
 def exercise_9():
+    N=1000
+
+    #inicialização dos dados
     target_f=create_target()
     data, labels = load_data(N, target_f)
 
@@ -138,14 +152,18 @@ def exercise_9():
         random_index=random.randrange(len(labels))
         labels[random_index]=random.sample([-1,1],1)[0]
 
-
+    #inicializa o classificador
     classifier=LinearRegression()
+    #gera o vetor de pesos da função g
     g_function = classifier.fit(np.array(new_data), labels)
+    print("exercicio 9")
     print(g_function)
     ##resposta letra A
 
 
 def exercise_10():
+    #inicialização dos dados
+    N=1000
     target_f=create_target()
     data, labels = load_data(N, target_f)
 
@@ -162,12 +180,17 @@ def exercise_10():
         random_index=random.randrange(len(labels))
         labels[random_index]=random.sample([-1,1],1)[0]
 
-
+    #inicialização do classificador
     classifier=LinearRegression()
+    #treinamento do classificador
     g_function = classifier.fit(np.array(new_data), labels)
 
+    #inicio do laço de testes
     test_rounds=1000
+    Eout=[]
+
     for i in range(test_rounds):
+        #inicialização dos dados fora da amostra
         target_f=create_target()
         data, labels = load_data(N, target_f)
 
@@ -184,9 +207,10 @@ def exercise_10():
             random_index=random.randrange(len(labels))
             labels[random_index]=random.sample([-1,1],1)[0]
 
+        #predição dos novos dados com base os dados gerados fora da amostra
         predicted_labels=classifier.predict(np.array(new_data))
 
-        Eout=[]
+        #calculo do erro fora da amostra
         E=0.
         for label, predicted_label in zip(labels, predicted_labels):
             if label!=predicted_label:
@@ -195,6 +219,7 @@ def exercise_10():
 
     Eout_mean=np.mean(np.array(Eout))
 
+    print("exercicio 10")
     print("media de erro fora da amostra")
     print(Eout_mean)
     ###resposta B
@@ -205,6 +230,7 @@ def exercise_10():
 if __name__ == '__main__':
 
     graphical=False
+    #função para geração das imagens que estão contidas no relatorio. Para sua reprodução basta alterar a flag acima para True
 
     if graphical:
         """### Visualização dos nossos dados"""
@@ -215,7 +241,7 @@ if __name__ == '__main__':
         ten_percent=int(N/10)
         for i in range(ten_percent):
             random_index=random.randrange(len(labels))
-            labels[random_index]=random.sample([-1,1],1)
+            labels[random_index]=random.sample([-1,1],1)[0]
 
         #funcao que ira mostrar nossa linha da target function
         x=np.linspace(-1,1,100)

@@ -39,7 +39,7 @@ def pre_classify(target_f, point):
     else:
         return -1
 
-#funcao que gera os dados de forma aleatoria para fazer os experimentos
+#função que gera os dados de forma aleatória para fazer os experimentos
 def load_data(n, target_f):
     data=[]
     labels=[]
@@ -55,12 +55,19 @@ class Perceptron:
     """
     Implementação do perceptron
     """
+
+    #função de inicialização da nossa classe. Aqui serão guardados tanto os pesos de nosso perceptron na variável w, como o learning rate na variável LR
+    #A variável threshold não sera de fato utilizada para a realizacao dos exercícios, tendo em vista que os dados gerados sao linearmente separáveis, mas dessa forma a classe terá uma implementação
+    #mais completa
     def __init__(self, LR=0.1, threshold=10000):
         self.w = np.zeros(3)
         self.LR=LR
         self.threshold=threshold
 
 
+    #função que classifica o conjunto de pontos de entrada, em que data e um vetor com features-dimenções e N exemplos
+    #para fazer a classificacao dos pontos basta aplicar o produto interno entre os pesos e as features do seu ponto, caso seja maior que 0, entao elas pertencem a uma classe (1), caso seja
+    #menor, elas pertencem a outra classe (-1)
     def predict(self, data):
         predicted_labels=[]
         for point in data:
@@ -71,29 +78,42 @@ class Perceptron:
         return predicted_labels
 
 
+    #função de treino de ajuste dos pesos de acordo com os dados de treino
     def fit(self, X, y):
         interactions=0
+        #limita um numero máximo de iterações, no nosso caso, como os dados sao linearmente separáveis isso não é tão necessário
         while interactions<self.threshold:
             interactions+=1
+            #é utilizada a função copy, pois se nao ele funciona como um ponteiro para a função de pesos, então ao alterar a função w a função que salva os valores também seria modificada
             saved_w=np.copy(self.w)
+            #escolhe de forma aleatória os pontos que vão ser avaliados
             random_index_order=random.sample(range(len(y)), len(y))
             for index in random_index_order:
                 prediction=self.predict([X[index]])[0]
+                #checa que o ponto está com a label já certa ou não, para evitar contas desnecessárias caso a label ja esteja correta
                 if prediction!= y[index]:
+                    #atualiza o vetor de pesos com dados que estavam sendo classificados de forma errada
                     self.w+=self.LR*(y[index]-prediction)*X[index]
                     break
+            #compara os pesos para checar se houve mudança. Se não houver significa que todos os pontos ja foram classificados corretamente, entao ele pode sair do loop
             if np.array_equal(saved_w,self.w):
                 break
+        #retorna os pesos e as iterações para serem utilizados nas respostas
         return self.w, interactions
 
 def exercises(N=10):
+    #vetores que irão acumular os valores obtidos por rodada da quantidade de iterações e da divergencia entre as funções f e g
     interactions=[]
     divergence=[]
+    #laço que faz a repetição das rodadas de teste
     for j in range(1000):
+        #inicialização dos dados
         target_f=create_target()
         data, labels = load_data(N, target_f)
 
+        #criação do classificador
         classifier=Perceptron()
+        #aprendizado do classificador
         g_function, i = classifier.fit(data, labels)
         interactions.append(i)
 
@@ -109,12 +129,15 @@ def exercises(N=10):
 
         divergence.append(d)
 
+    #retorna a média das metricas obtidas pelas rodadas que foram acumuladas nos vetores
     interactions_mean=np.mean(np.array(interactions))
     divergence_mean=np.mean(np.array(divergence))
 
     print("esperimento com N =", N)
+    print("exercicio 1 ou 3")
     print("media de iteracoes")
     print(interactions_mean)
+    print("exercicio 2 ou 4")
     print("divergencia media")
     print(divergence_mean)
 
@@ -124,6 +147,7 @@ if __name__ == '__main__':
     N=100
     graphical=False
 
+    #função para geração das imagens que estão contidas no relatorio. Para sua reprodução basta alterar a flag acima para True
     if graphical:
         """### Visualização dos nossos dados"""
         target_f=create_target()
