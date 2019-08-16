@@ -8,7 +8,7 @@ Codigo referente aos 4 exercícios 13 e 14 da lista 1 de IC2
 import numpy as np
 import random
 import matplotlib.pyplot as plt
-N=100
+
 
 '''funcoes auxiliáres para geracao de dados e funcao target (f)'''
 def create_target():
@@ -69,9 +69,9 @@ class LogisticRegression:
         self.w = np.zeros(lenght)
 
 
-    #função sigmoide phi
-    def phi(self, z):
-        return 1 / (1 + np.exp(-z))
+    # #função sigmoide phi
+    # def phi(self, z):
+    #     return 1 / (1 + np.exp(-z))
 
     #função erro utilizada correlacionada com a funcao gradiente()
     # def loss(self, h, y):
@@ -119,21 +119,21 @@ class LogisticRegression:
 
         return self.w, interations
 
-    #aplica os dados de teste na funcao phi com os pesos ajustados e retorna a probabilidade dos dados estarem em cada classe
-    #quanto mais perto de 1, mais ele pertence a classe 1, quanto mais perto de 0, mas ele pertence a classe 0
-    def predict_proba(self, X):
-        proba=self.phi(np.dot(X, self.w))
-        return proba
-
-    def predict(self, X):
-        proba=self.phi(np.dot(X, self.w))
-        predicted_labels=[]
-        for prob in proba:
-            if prob > 0.5:
-                predicted_labels.append(1)
-            else:
-                predicted_labels.append(-1)
-        return predicted_labels
+    # #aplica os dados de teste na funcao phi com os pesos ajustados e retorna a probabilidade dos dados estarem em cada classe
+    # #quanto mais perto de 1, mais ele pertence a classe 1, quanto mais perto de 0, mas ele pertence a classe 0
+    # def predict_proba(self, X):
+    #     proba=self.phi(np.dot(X, self.w))
+    #     return proba
+    #
+    # def predict(self, X):
+    #     proba=self.phi(np.dot(X, self.w))
+    #     predicted_labels=[]
+    #     for prob in proba:
+    #         if prob > 0.5:
+    #             predicted_labels.append(1)
+    #         else:
+    #             predicted_labels.append(-1)
+    #     return predicted_labels
 
     def loss_mean(self, X, y):
         losses=[]
@@ -142,10 +142,10 @@ class LogisticRegression:
         return np.mean(np.array(losses))
 
 if __name__ == '__main__':
+    N=100
     rounds=100
     Eout=[]
     interactions=[]
-    #para cada embaralhamento do kfold ele irá medir qual conjunto de dados obteve o melhor AUC, e ficar com esse para ser utilizado futuramente
     for i in range(rounds):
         target_f=create_target()
         data, labels = load_data(N, target_f)
@@ -158,16 +158,7 @@ if __name__ == '__main__':
         #criação de novos dados para se fazer a medicao de divergencia entre as funcoes
         data, labels = load_data(N, target_f)
         Eout.append(classifier.loss_mean(data, labels))
-        # predicted_labels = classifier.predict(data)
-        #
-        # #y_pred = clf.predict_proba(data)
-        #
-        # #variavel que guarda a divergencia a cada iteracao da comparacao
-        # E=0.
-        # for label, predicted_label in zip(labels, predicted_labels):
-        #     if label!=predicted_label:
-        #         E+=1./N
-        # Eout.append(E)
+
 
     interactions_mean=np.mean(np.array(interactions))
     Eout_mean=np.mean(np.array(Eout))

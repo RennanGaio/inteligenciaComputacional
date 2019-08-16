@@ -7,7 +7,6 @@ Codigo referente aos 4 primeiros exercícios da lista 1 de IC2
 import numpy as np
 import random
 import matplotlib.pyplot as plt
-from sklearn import datasets
 
 '''funcoes auxiliáres para geracao de dados e funcao target (f)'''
 def create_target():
