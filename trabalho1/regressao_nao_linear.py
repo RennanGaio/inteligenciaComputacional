@@ -230,5 +230,10 @@ if __name__ == '__main__':
 
     else:
         exercise_8()
+        ##resposta D
+
         exercise_9()
+        ##resposta A
+
         exercise_10()
+        ##resposta B
