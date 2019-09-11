@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split
 
 def split_data():
     bananadata = pd.read_csv("../data/banana.csv")
-    bananadata_train, bananadata_test = train_test_split(bananadata, test_size=0.20)
+    bananadata_train, bananadata_test = train_test_split(bananadata, test_size=0.10)
 
     bananadata_train.to_csv("../data/bananadata_train.csv", sep='\t')
     bananadata_test.to_csv("../data/bananadata_test.csv", sep='\t')
@@ -14,12 +14,12 @@ def split_data():
 if __name__ == '__main__':
     split_data()
 else:
-    bananadata_train = pd.read_csv("../data/bananadata_train.csv", sep='\t').drop('I', axis=1)
+    bananadata_train = pd.read_csv("../data/bananadata_train.csv", sep='\t', index_col=0)
     print(bananadata_train.shape)
     X_train = bananadata_train.drop('Class', axis=1)
     y_train = bananadata_train['Class']
 
-    bananadata_test = pd.read_csv("../data/bananadata_test.csv", sep='\t').drop('I', axis=1)
+    bananadata_test = pd.read_csv("../data/bananadata_test.csv", sep='\t', index_col=0)
     print(bananadata_test.shape)
     X_test = bananadata_test.drop('Class', axis=1)
     y_test = bananadata_test['Class']

@@ -1,3 +1,4 @@
 https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html
 https://www.kaggle.com/udaysa/svm-with-scikit-learn-svm-with-parameter-tuning
 https://stackabuse.com/implementing-svm-and-kernel-svm-with-pythons-scikit-learn/
+https://github.com/leonardodazeredo/ic-work/blob/master/banana/experiments_svm.py

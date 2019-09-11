@@ -1,0 +1,18 @@
+###################################
+
+best estimator: GridSearchCV(cv=2, error_score='raise-deprecating',
+             estimator=SVC(C=1, cache_size=200, class_weight=None, coef0=0.0,
+                           decision_function_shape='ovr', degree=3,
+                           gamma='auto_deprecated', kernel='rbf', max_iter=-1,
+                           probability=False, random_state=None, shrinking=True,
+                           tol=0.001, verbose=False),
+             iid='warn', n_jobs=-1,
+             param_grid=[{'gamma': [1, 0.5, 0.01], 'kernel': ['rbf']},
+                         {'gamma': [1, 0.5, 0.01], 'kernel': ['sigmoid']},
+                         {'kernel': ['linear']},
+                         {'degree': [3, 4, 5], 'gamma': [1, 0.5, 0.01],
+                          'kernel': ['poly']}],
+             pre_dispatch='2*n_jobs', refit=True, return_train_score=False,
+             scoring='accuracy', verbose=0)
+accuracy in test:0.8754716981132076
+###################################
