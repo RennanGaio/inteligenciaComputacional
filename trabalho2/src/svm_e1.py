@@ -4,7 +4,7 @@ import numpy as np
 import pickle
 from datetime import datetime
 import pandas as pd
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 #from PIL import Image
 #import glob
 #import cv2
@@ -28,6 +28,12 @@ import xgboost as xgb
 
 from dataset import data
 
+graphical=True
+
+if graphical:
+    data['X'].plot.scatter(x='At1', y ='At2', c=data['y'], colormap='viridis')
+    plt.show()
+
 
 tuned_parameters = [{'kernel': ['rbf'], 'gamma': [1, 0.5, 0.01]},
                     {'kernel': ['sigmoid'], 'gamma': [1, 0.5, 0.01]},
@@ -38,7 +44,7 @@ tuned_parameters = [{'kernel': ['rbf'], 'gamma': [1, 0.5, 0.01]},
 ks=[2,5,10]
 metrics = [0,""]
 
-classifiers=["SVN", "XGB"]
+classifiers=["SVN", "RF"]
 
 for classifier in classifiers:
     #this loop will interate for each classifier using diferents kfolds
@@ -54,29 +60,29 @@ for classifier in classifiers:
         if classifier == "SVN":
           clf = GridSearchCV(estimator=SVC(C=1), param_grid=tuned_parameters, scoring="accuracy", n_jobs=-1, cv=kf, verbose=0)
         #XGBoost
-        elif classifier == "XGBoost":
-          clf = xgb.XGBClassifier(n_jobs=-1)
+        elif classifier == "RF":
+          estimators = [ e for e in range(5, 25, 5) ]
+          clf = GridSearchCV(estimator=RandomForestClassifier(), param_grid=dict(n_estimators=estimators), scoring="accuracy", n_jobs=-1, cv=kf, verbose=0)
 
         #this fit will train your classifier to your dataset
         clf.fit(data['X_train'], data['y_train'])
         end = datetime.now()
 
-        if classifier == "SVN":
-            print("Best parameters set found on development set:")
-            print()
-            print(clf.best_params_)
-            print()
-            print("Grid scores on development set:")
-            print()
-            means = clf.cv_results_['mean_test_score']
-            stds = clf.cv_results_['std_test_score']
-            for mean, std, params in zip(means, stds, clf.cv_results_['params']):
-                print("%0.3f (+/-%0.03f) for %r"
-                      % (mean, std * 2, params))
-            print()
+        print("Best parameters set found on development set:")
+        print()
+        print(clf.best_params_)
+        print()
+        print("Grid scores on development set:")
+        print()
+        means = clf.cv_results_['mean_test_score']
+        stds = clf.cv_results_['std_test_score']
+        for mean, std, params in zip(means, stds, clf.cv_results_['params']):
+            print("%0.3f (+/-%0.03f) for %r"
+                  % (mean, std * 2, params))
+        print()
         #this will return the probability of each example be on all classes
         #y_pred = clf.predict_proba(x_train[val_index])
-        y_pred = clf.predict(data['X_test'])
+        y_pred = clf.best_estimator_.predict(data['X_test'])
         y_true = data['y_test']
         #this will generate the accuracy score
 
