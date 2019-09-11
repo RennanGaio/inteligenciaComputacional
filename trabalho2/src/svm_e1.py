@@ -44,7 +44,7 @@ tuned_parameters = [{'kernel': ['rbf'], 'gamma': [1, 0.5, 0.01]},
 ks=[2,5,10]
 metrics = [0,""]
 
-classifiers=["SVN", "RF"]
+classifiers=["SVM", "RF"]
 
 for classifier in classifiers:
     #this loop will interate for each classifier using diferents kfolds
@@ -56,8 +56,8 @@ for classifier in classifiers:
         start = datetime.now()
 
         #this will chose the classifier, and use gridSearch to choose the best hyper parameters focussing on reach the best AUC score
-        #SVN
-        if classifier == "SVN":
+        #SVM
+        if classifier == "SVM":
           clf = GridSearchCV(estimator=SVC(C=1), param_grid=tuned_parameters, scoring="accuracy", n_jobs=-1, cv=kf, verbose=0)
         #XGBoost
         elif classifier == "RF":
@@ -67,6 +67,16 @@ for classifier in classifiers:
         #this fit will train your classifier to your dataset
         clf.fit(data['X_train'], data['y_train'])
         end = datetime.now()
+
+
+        if graphical and classifier == "SVM":
+            #pegar os indices, criar uma lista auxiliar, setar para 0 o decision bundry, jogar essa lista no c
+            data['X'].plot.scatter(x='At1', y ='At2', c=data['y'], colormap='viridis')
+            df = pd.DataFrame(clf.best_estimator_.support_vectors_)
+            df.columns = ['a', 'b']
+            df.plot.scatter(x='a', y='b', c='black')
+            plt.show()
+
 
         print("Best parameters set found on development set:")
         print()
