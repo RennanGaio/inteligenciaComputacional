@@ -30,9 +30,17 @@ from dataset import data
 
 graphical=True
 
-if graphical:
-    data['X'].plot.scatter(x='At1', y ='At2', c=data['y'], colormap='viridis')
+
+def plotBeautifulBundry(X, y):
+    print()
+
+def plotsimplescatter(X, y):
+    X.plot.scatter(x='At1', y ='At2', c=y, marker="x", colormap='viridis')
     plt.show()
+
+if graphical:
+    plotsimplescatter(data['X'], data['y'])
+
 
 
 tuned_parameters = [{'kernel': ['rbf'], 'gamma': [1, 0.5, 0.01]},
@@ -71,11 +79,15 @@ for classifier in classifiers:
 
         if graphical and classifier == "SVM":
             #pegar os indices, criar uma lista auxiliar, setar para 0 o decision bundry, jogar essa lista no c
-            data['X'].plot.scatter(x='At1', y ='At2', c=data['y'], colormap='viridis')
-            df = pd.DataFrame(clf.best_estimator_.support_vectors_)
-            df.columns = ['a', 'b']
-            df.plot.scatter(x='a', y='b', c='black')
-            plt.show()
+            suportIndices = clf.best_estimator_.support_
+            labelsWithBundry = np.copy(data['y'])
+            for i in suportIndices:
+                labelsWithBundry[i] = 0
+            plotsimplescatter(data['X'], labelsWithBundry)
+            #df = pd.DataFrame(clf.best_estimator_.support_vectors_)
+            #df.columns = ['a', 'b']
+            #df.plot.scatter(x='a', y='b', c='black')
+
 
 
         print("Best parameters set found on development set:")
