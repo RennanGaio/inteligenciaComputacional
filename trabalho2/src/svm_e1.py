@@ -67,7 +67,7 @@ if __name__ == '__main__':
 
     for classifier in classifiers:
         #this loop will interate for each classifier using diferents kfolds
-        for kn in ks:
+        for kf in ks:
             print ("config: ",classifier)
             print ("using kfold= ",kf)
             print ("\n")
