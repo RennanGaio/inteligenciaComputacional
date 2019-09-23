@@ -4,6 +4,10 @@ from sklearn.model_selection import train_test_split
 
 dataset="banana"
 #dataset="phoneme"
+#dataset="wine"
+#dataset="heart"
+#dataset="coil2000"
+#dataset="magic"
 
 def split_data():
     dataset_data = pd.read_csv("../data/"+dataset+".csv")

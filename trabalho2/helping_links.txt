@@ -3,3 +3,6 @@ https://www.kaggle.com/udaysa/svm-with-scikit-learn-svm-with-parameter-tuning
 https://stackabuse.com/implementing-svm-and-kernel-svm-with-pythons-scikit-learn/
 https://github.com/leonardodazeredo/ic-work/blob/master/banana/experiments_svm.py
 https://towardsdatascience.com/visualizing-support-vector-machine-decision-boundary-69e7591dacea
+https://sci2s.ugr.es/keel/category.php?cat=clas
+https://xgboost.readthedocs.io/en/latest/parameter.html
+https://keras.io/layers/convolutional/
